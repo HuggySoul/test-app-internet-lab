@@ -79,6 +79,34 @@ export function MatchesScreen() {
         ))}
       </View>
 
+      {favorites.isLoading && (
+        <Text style={styles.secondary}>Восстанавливаем избранное…</Text>
+      )}
+
+      {favorites.warning && (
+        <Text accessibilityRole="alert" style={styles.error}>
+          {favorites.warning}
+        </Text>
+      )}
+
+      {favorites.error && (
+        <View style={styles.notice}>
+          <Text accessibilityRole="alert" style={styles.error}>
+            {favorites.error}
+          </Text>
+
+          <Pressable
+            accessibilityRole="button"
+            onPress={favorites.retry}
+            style={styles.button}
+          >
+            <Text style={styles.buttonText}>
+              {favorites.isReady ? 'Повторить сохранение' : 'Повторить чтение'}
+            </Text>
+          </Pressable>
+        </View>
+      )}
+
       {state.status !== 'loading' && state.error && (
         <Text accessibilityRole="alert" style={styles.error}>
           {state.error}
@@ -106,7 +134,7 @@ export function MatchesScreen() {
             <MatchCard
               match={item}
               favorite={favorites.isFavorite(item.id)}
-              favoritesReady={true}
+              favoritesReady={favorites.isReady}
               onToggleFavorite={() => favorites.toggle(item.id)}
             />
           )}
@@ -181,4 +209,5 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   error: { fontSize: 14, color: '#b91c1c' },
+  notice: { gap: 8, alignItems: 'flex-start' },
 });

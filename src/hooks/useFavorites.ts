@@ -1,20 +1,17 @@
-import { useState } from 'react';
+import { useFavoritesStorage } from "./useFavoritesStorage";
 
-// Избранные матчи (по id). Хранятся только в памяти, пока открыто приложение.
 export function useFavorites() {
-  const [favorites, setFavorites] = useState<string[]>([]);
+    const { favorites, updateFavorites, ...storage } = useFavoritesStorage();
 
-  const isFavorite = (id: string) => Boolean(favorites.indexOf(id));
-
-  const toggle = (id: string) => {
-    const index = favorites.indexOf(id);
-    if (index === -1) {
-      favorites.push(id);
-    } else {
-      favorites.splice(index, 1);
+    function isFavorite(id: string): boolean {
+        return favorites?.includes(id) ?? false;
     }
-    setFavorites(favorites);
-  };
 
-  return { favorites, isFavorite, toggle };
+    function toggle(id: string) {
+        updateFavorites((previous) => previous.includes(id)
+            ? previous.filter((favorite) => favorite !== id)
+            : [...previous, id]);
+    }
+
+    return { ...storage, isFavorite, toggle };
 }
